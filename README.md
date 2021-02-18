@@ -8,5 +8,5 @@ go mod tidy
 
 ```
 go build .
-sudo 
+sudo ./jiandocker run /bin/bash -m 20m 
 ```
