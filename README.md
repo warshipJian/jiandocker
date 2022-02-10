@@ -11,4 +11,3 @@ go build .
 sudo ./jiandocker run /bin/bash -m 20m 
 ```
 
-
