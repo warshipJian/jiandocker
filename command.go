@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
 	"os"
 	"os/exec"
 	"syscall"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/urfave/cli"
 )
 
 var runCommand = cli.Command{
@@ -15,7 +16,7 @@ var runCommand = cli.Command{
 			jiandocker run [command] -m [limit memory]`,
 	Flags: []cli.Flag{
 		cli.StringFlag{
-			Name: "m",
+			Name:  "m",
 			Usage: "memory limit",
 		},
 	},
@@ -24,7 +25,7 @@ var runCommand = cli.Command{
 			return fmt.Errorf("Missing container command")
 		}
 		command := context.Args().Get(0)
-		args := []string{"init",command}
+		args := []string{"init", command}
 		cmd := exec.Command("/proc/self/exe", args...)
 		cmd.SysProcAttr = &syscall.SysProcAttr{
 			Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS |
@@ -39,7 +40,7 @@ var runCommand = cli.Command{
 		// limit memory
 		limitMemory := context.String("m")
 		if limitMemory != "" {
-			MemoryLimit(cmd.Process.Pid,limitMemory)
+			MemoryLimit(cmd.Process.Pid, limitMemory)
 		}
 		cmd.Wait()
 		return nil
@@ -47,11 +48,11 @@ var runCommand = cli.Command{
 }
 
 var initCommand = cli.Command{
-	Name: "init",
+	Name:  "init",
 	Usage: `mount proc system `,
 	Action: func(context *cli.Context) error {
 		// const mount namespace
-		syscall.Mount("","/","", syscall.MS_PRIVATE | syscall.MS_REC, "")
+		syscall.Mount("", "/", "", syscall.MS_PRIVATE|syscall.MS_REC, "")
 		defaultMountFlags := syscall.MS_NOEXEC | syscall.MS_NOSUID | syscall.MS_NODEV
 		_ = syscall.Mount("proc", "/proc", "proc", uintptr(defaultMountFlags), "")
 		command := context.Args().Get(0)
