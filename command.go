@@ -24,6 +24,9 @@ var runCommand = cli.Command{
 		if len(context.Args()) < 1 {
 			return fmt.Errorf("Missing container command")
 		}
+
+		fmt.Println("aaa")
+
 		command := context.Args().Get(0)
 		args := []string{"init", command}
 		cmd := exec.Command("/proc/self/exe", args...)
@@ -37,7 +40,6 @@ var runCommand = cli.Command{
 		if err := cmd.Start(); err != nil {
 			log.Error(err)
 		}
-		// limit memory
 		limitMemory := context.String("m")
 		if limitMemory != "" {
 			MemoryLimit(cmd.Process.Pid, limitMemory)
@@ -51,12 +53,19 @@ var initCommand = cli.Command{
 	Name:  "init",
 	Usage: `mount proc system `,
 	Action: func(context *cli.Context) error {
-		// const mount namespace
-		syscall.Mount("", "/", "", syscall.MS_PRIVATE|syscall.MS_REC, "")
-		defaultMountFlags := syscall.MS_NOEXEC | syscall.MS_NOSUID | syscall.MS_NODEV
-		_ = syscall.Mount("proc", "/proc", "proc", uintptr(defaultMountFlags), "")
+
+		fmt.Println("bbb")
+
 		command := context.Args().Get(0)
 		argv := []string{command}
+		fmt.Println(argv)
+
+		// unshareM()
+
+		// 挂载
+		setUpMount()
+
+		// 执行命令
 		if err := syscall.Exec(command, argv, os.Environ()); err != nil {
 			log.Errorf(err.Error())
 		}
