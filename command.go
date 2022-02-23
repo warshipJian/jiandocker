@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"os"
-	"os/exec"
 	"syscall"
 
 	log "github.com/sirupsen/logrus"
@@ -21,45 +19,26 @@ var runCommand = cli.Command{
 		},
 	},
 	Action: func(context *cli.Context) error {
-		if len(context.Args()) < 1 {
-			return fmt.Errorf("Missing container command")
-		}
-		command := context.Args().Get(0)
-		args := []string{"init", command}
-		cmd := exec.Command("/proc/self/exe", args...)
-		cmd.SysProcAttr = &syscall.SysProcAttr{
-			Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS |
-				syscall.CLONE_NEWNET | syscall.CLONE_NEWIPC,
-		}
-		cmd.Stdin = os.Stdin
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		if err := cmd.Start(); err != nil {
-			log.Error(err)
-		}
-		// limit memory
-		limitMemory := context.String("m")
-		if limitMemory != "" {
-			MemoryLimit(cmd.Process.Pid, limitMemory)
-		}
-		cmd.Wait()
+		NewParentProcess(context)
 		return nil
 	},
 }
 
 var initCommand = cli.Command{
 	Name:  "init",
-	Usage: `mount proc system `,
+	Usage: `mount proc system busybox`,
 	Action: func(context *cli.Context) error {
-		// const mount namespace
-		syscall.Mount("", "/", "", syscall.MS_PRIVATE|syscall.MS_REC, "")
-		defaultMountFlags := syscall.MS_NOEXEC | syscall.MS_NOSUID | syscall.MS_NODEV
-		_ = syscall.Mount("proc", "/proc", "proc", uintptr(defaultMountFlags), "")
+
+		// 挂载
+		setUpMount()
+
+		// 执行传入的命令
 		command := context.Args().Get(0)
 		argv := []string{command}
 		if err := syscall.Exec(command, argv, os.Environ()); err != nil {
 			log.Errorf(err.Error())
 		}
+
 		return nil
 	},
 }
