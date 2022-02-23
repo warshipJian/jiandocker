@@ -10,12 +10,6 @@ import (
 )
 
 func setUpMount() {
-	pwd, err := os.Getwd()
-	if err != nil {
-		log.Errorf("Get current location error %v", err)
-		return
-	}
-	log.Infof("Current location is %s", pwd)
 
 	// 设置根目录为private，实现unshare -m效果
 	if err := syscall.Mount("/", "/", "", syscall.MS_REC|syscall.MS_PRIVATE, ""); err != nil {
@@ -36,7 +30,6 @@ func pivotRoot() error {
 
 	// 把root重新mount一次
 	root := "/newroot"
-	fmt.Println(root)
 	if err := syscall.Mount(root, root, "bind", syscall.MS_BIND|syscall.MS_REC, ""); err != nil {
 		return fmt.Errorf("Mount rootfs to itself error: %v", err)
 	}
