@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"syscall"
@@ -26,5 +27,9 @@ func NewParentProcess(context *cli.Context) {
 	if limitMemory != "" {
 		MemoryLimit(cmd.Process.Pid, limitMemory)
 	}
-	cmd.Wait()
+	err := cmd.Wait()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 }

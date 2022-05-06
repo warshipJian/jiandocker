@@ -9,7 +9,7 @@ import (
 func main() {
 	app := cli.NewApp()
 	app.Name = "jiandocker"
-	app.Usage = `a simple docker deamon`
+	app.Usage = `a simple docker demon`
 
 	app.Commands = []cli.Command{
 		initCommand,

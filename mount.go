@@ -17,13 +17,25 @@ func setUpMount() {
 	}
 
 	// pivot_root挂载
-	pivotRoot()
+	err := pivotRoot()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	// 挂载proc
-	procMount()
+	err2 := procMount()
+	if err2 != nil {
+		fmt.Println(err2)
+		return
+	}
 
 	// 挂载tmpfs
-	tmpfsMount()
+	err3 := tmpfsMount()
+	if err3 != nil {
+		fmt.Println(err3)
+		return
+	}
 }
 
 func pivotRoot() error {
@@ -65,11 +77,21 @@ func pivotRoot() error {
 	return os.Remove(pivotDir)
 }
 
-func procMount() {
+func procMount() error {
 	defaultMountFlags := syscall.MS_NOEXEC | syscall.MS_NOSUID | syscall.MS_NODEV
-	syscall.Mount("proc", "/proc", "proc", uintptr(defaultMountFlags), "")
+	err := syscall.Mount("proc", "/proc", "proc", uintptr(defaultMountFlags), "")
+	if err != nil {
+		return err
+	} else {
+		return nil
+	}
 }
 
-func tmpfsMount() {
-	syscall.Mount("tmpfs", "/dev", "tmpfs", syscall.MS_NOSUID|syscall.MS_STRICTATIME, "mode=755")
+func tmpfsMount() error {
+	err := syscall.Mount("tmpfs", "/dev", "tmpfs", syscall.MS_NOSUID|syscall.MS_STRICTATIME, "mode=755")
+	if err != nil {
+		return err
+	} else {
+		return nil
+	}
 }
