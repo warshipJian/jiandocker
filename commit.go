@@ -7,10 +7,12 @@ import (
 )
 
 func commitContainer(imageName string) {
-	mntURL := "/root/mnt"
+	mntURL := "/newroot"
 	imageTar := "/tmp/" + imageName + ".tar"
 	fmt.Printf("%s", imageTar)
 	if _, err := exec.Command("tar", "-czf", imageTar, "-C", mntURL, ".").CombinedOutput(); err != nil {
 		log.Errorf("Tar folder %s error %v", mntURL, err)
+	} else {
+		log.Infof("commit success")
 	}
 }
