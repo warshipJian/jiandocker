@@ -17,9 +17,12 @@ func NewParentProcess(context *cli.Context) {
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS | syscall.CLONE_NEWNET | syscall.CLONE_NEWIPC,
 	}
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	tty := context.Bool("ti")
+	if tty {
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+	}
 	if err := cmd.Start(); err != nil {
 		log.Error(err)
 	}
@@ -27,9 +30,11 @@ func NewParentProcess(context *cli.Context) {
 	if limitMemory != "" {
 		MemoryLimit(cmd.Process.Pid, limitMemory)
 	}
-	err := cmd.Wait()
-	if err != nil {
-		fmt.Println(err)
-		return
+	if tty {
+		err := cmd.Wait()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 	}
 }

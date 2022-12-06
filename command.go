@@ -17,6 +17,14 @@ var runCommand = cli.Command{
 			Name:  "m",
 			Usage: "memory limit",
 		},
+		cli.BoolFlag{
+			Name:  "d",
+			Usage: "detach container",
+		},
+		cli.BoolFlag{
+			Name:  "ti",
+			Usage: "enable tty",
+		},
 	},
 	Action: func(context *cli.Context) error {
 		NewParentProcess(context)
