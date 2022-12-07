@@ -17,6 +17,10 @@ var runCommand = cli.Command{
 			Name:  "m",
 			Usage: "memory limit",
 		},
+		cli.StringFlag{
+			Name:  "name ",
+			Usage: "container name",
+		},
 		cli.BoolFlag{
 			Name:  "d",
 			Usage: "detach container",
