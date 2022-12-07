@@ -18,7 +18,7 @@ var runCommand = cli.Command{
 			Usage: "memory limit",
 		},
 		cli.StringFlag{
-			Name:  "name ",
+			Name:  "name",
 			Usage: "container name",
 		},
 		cli.BoolFlag{
