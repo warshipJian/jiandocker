@@ -47,12 +47,6 @@ var commitCommand = cli.Command{
 	Name: "commit",
 	Usage: `commit a container into image
 			jiandocker commit `,
-	Flags: []cli.Flag{
-		cli.StringFlag{
-			Name:  "m",
-			Usage: "memory limit",
-		},
-	},
 	Action: func(context *cli.Context) error {
 		imageName := context.Args().Get(0)
 		commitContainer(imageName)
