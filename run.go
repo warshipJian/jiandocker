@@ -11,13 +11,18 @@ import (
 )
 
 func NewParentProcess(context *cli.Context) {
-	command := context.Args().Get(0)
-	args := []string{"init", command}
+	args := getCmdArray(context, []string{"init"})
 	cmd := exec.Command("/proc/self/exe", args...)
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS | syscall.CLONE_NEWNET | syscall.CLONE_NEWIPC,
 	}
 	tty := context.Bool("ti")
+	d := context.Bool("d")
+	if tty && d {
+		log.Error("ti和d参数不能同时存在")
+		return
+	}
+
 	if tty {
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
@@ -37,4 +42,11 @@ func NewParentProcess(context *cli.Context) {
 			return
 		}
 	}
+}
+
+func getCmdArray(context *cli.Context, cmdArray []string) []string {
+	for _, arg := range context.Args() {
+		cmdArray = append(cmdArray, arg)
+	}
+	return cmdArray
 }

@@ -41,9 +41,8 @@ var initCommand = cli.Command{
 		setUpMount()
 
 		// 执行传入的命令
-		command := context.Args().Get(0)
-		argv := []string{command}
-		if err := syscall.Exec(command, argv, os.Environ()); err != nil {
+		argv := getCmdArray(context, []string{})
+		if err := syscall.Exec(argv[0], argv[0:], os.Environ()); err != nil {
 			log.Errorf(err.Error())
 		}
 
