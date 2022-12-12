@@ -6,6 +6,7 @@ import (
 	"github.com/urfave/cli"
 	"os"
 	"os/exec"
+	"strings"
 	"syscall"
 )
 
@@ -33,6 +34,7 @@ func NewParentProcess(context *cli.Context) {
 
 	// 记录容器信息
 	containerName := context.String("name")
+	command := strings.Join(args[1:], " ")
 	containerName, err := recordContainerINfo(cmd.Process.Pid, command, containerName)
 	if err != nil {
 		log.Error(err)
