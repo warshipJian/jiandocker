@@ -64,3 +64,12 @@ var commitCommand = cli.Command{
 		return nil
 	},
 }
+
+var listCommand = cli.Command{
+	Name:  "ps",
+	Usage: `list all the containers`,
+	Action: func(context *cli.Context) error {
+		listContainers()
+		return nil
+	},
+}
